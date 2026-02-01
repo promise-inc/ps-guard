@@ -1,6 +1,6 @@
 {
   "name": "@promise-inc/ps-guard",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Lighthouse-based performance guard. Enforce Web Vitals thresholds in CI and locally.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -24,8 +24,8 @@ function buildFlags(config: PSGuardConfig, port: number) {
       ? { mobile: true, width: 375, height: 812, deviceScaleFactor: 3, disabled: false }
       : { mobile: false, width: 1350, height: 940, deviceScaleFactor: 1, disabled: false },
     throttling: config.device === "mobile"
-      ? undefined
-      : { cpuSlowdownMultiplier: 1, downloadThroughputKbps: 0, uploadThroughputKbps: 0, rttMs: 0, requestLatencyMs: 0, throughputKbps: 0 },
+      ? { cpuSlowdownMultiplier: 4, downloadThroughputKbps: 1600, uploadThroughputKbps: 750, rttMs: 150, requestLatencyMs: 150, throughputKbps: 1600 }
+      : { cpuSlowdownMultiplier: 1, downloadThroughputKbps: 10240, uploadThroughputKbps: 10240, rttMs: 40, requestLatencyMs: 0, throughputKbps: 10240 },
   };
 }
 
