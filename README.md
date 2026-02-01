@@ -7,6 +7,8 @@ Lighthouse-based performance guard. Enforce Web Vitals thresholds in CI and loca
 Running Lighthouse manually is tedious and inconsistent. `ps-guard` wraps Lighthouse into an opinionated CLI and API with:
 
 - **Threshold enforcement** — fail CI if LCP, CLS, INP, TTFB, or FCP exceed your limits
+- **Sitemap support** — audit all pages from a sitemap.xml automatically
+- **HTML reports** — coverage-style visual reports with score bars and details
 - **Presets** — built-in configs for Next.js, landing pages, and marketing sites
 - **Fix hints** — actionable suggestions when a metric fails
 - **JSON output** — pipe results to dashboards or custom reporters
@@ -31,6 +33,18 @@ npx ps-guard --url https://example.com --json
 
 # CI mode (no colors)
 npx ps-guard --url https://example.com --ci
+
+# Audit all pages from sitemap
+npx ps-guard --sitemap https://example.com/sitemap.xml
+
+# Sitemap with max URLs
+npx ps-guard --sitemap https://example.com/sitemap.xml --max-urls 20
+
+# Generate HTML report
+npx ps-guard --url https://example.com --html
+
+# Sitemap + HTML report in custom directory
+npx ps-guard --sitemap https://example.com/sitemap.xml --html --report ./reports/
 ```
 
 ### Programmatic
@@ -53,13 +67,66 @@ if (!result.passed) {
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `--url <url>` | URL to audit (required) | — |
+| `--url <url>` | URL to audit | — |
+| `--sitemap <url>` | Sitemap URL to audit all pages | — |
+| `--max-urls <n>` | Max URLs from sitemap | `50` |
+| `--html` | Generate HTML report | `false` |
+| `--report <dir>` | Output directory for HTML report | `./ps-guard-report` |
 | `-p, --preset <name>` | Use a built-in preset | — |
 | `--device <mobile\|desktop>` | Device emulation | `mobile` |
 | `--retries <n>` | Retry attempts | `1` |
 | `--json` | Output as JSON | `false` |
 | `--ci` | No colors, clean output | `false` |
 | `-h, --help` | Show help | — |
+
+> **Note:** Either `--url` or `--sitemap` is required.
+
+## Sitemap Auditing
+
+Audit all pages from a `sitemap.xml` in a single command. ps-guard fetches the sitemap, extracts all URLs, and runs Lighthouse sequentially (reusing a single Chrome instance for performance).
+
+```bash
+ps-guard --sitemap https://example.com/sitemap.xml
+```
+
+Features:
+- Supports sitemap index files (recursive, max 2 levels)
+- Deduplicates URLs automatically
+- `--max-urls` limits the number of URLs (default: 50)
+- Progress output shows score per URL in real time
+- If one URL fails, the audit continues with remaining URLs
+
+Example output:
+```
+Scanning 42 URLs from sitemap...
+
+[1/42] ✔ 94  https://example.com/
+[2/42] ✖ 67  https://example.com/about
+[3/42] ✔ 91  https://example.com/pricing
+...
+
+✖ 3 of 42 URLs failed (avg score: 85)
+```
+
+## HTML Report
+
+Generate a self-contained HTML report with visual score bars, summary cards, and collapsible details per URL.
+
+```bash
+# Single URL
+ps-guard --url https://example.com --html
+
+# Sitemap with report in custom directory
+ps-guard --sitemap https://example.com/sitemap.xml --html --report ./reports/
+```
+
+The report includes:
+- Summary cards (average score, worst score, pass/fail counts)
+- URL overview table with scores
+- Collapsible detail sections per URL with metric bars
+- Lighthouse color coding (green/orange/red)
+
+The report is written to `./ps-guard-report/index.html` by default (override with `--report <dir>`).
 
 ## Configuration
 

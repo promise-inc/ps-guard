@@ -14,6 +14,10 @@ export interface PSGuardConfig {
   failOnError: boolean;
   retries: number;
   preset?: string;
+  sitemap?: string;
+  report?: string;
+  html?: boolean;
+  maxUrls?: number;
 }
 
 export interface MetricResult {
@@ -47,4 +51,24 @@ export interface CLIArgs {
   ci: boolean;
   help: boolean;
   retries?: number;
+  sitemap?: string;
+  report?: string;
+  html: boolean;
+  maxUrls?: number;
+}
+
+export interface SitemapEntry {
+  url: string;
+}
+
+export interface PSGuardMultiResult {
+  passed: boolean;
+  totalUrls: number;
+  passedUrls: number;
+  failedUrls: number;
+  averageScore: number;
+  worstScore: number;
+  results: PSGuardResult[];
+  device: "mobile" | "desktop";
+  timestamp: string;
 }

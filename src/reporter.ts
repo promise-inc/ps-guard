@@ -1,4 +1,4 @@
-import type { PSGuardResult } from "./types";
+import type { PSGuardResult, PSGuardMultiResult } from "./types";
 import { getHints } from "./hints";
 import {
   printHeader,
@@ -34,4 +34,14 @@ export function reportHuman(result: PSGuardResult): void {
 
 export function reportJSON(result: PSGuardResult): void {
   console.log(JSON.stringify(result, null, 2));
+}
+
+export function reportMultiHuman(multi: PSGuardMultiResult): void {
+  for (const result of multi.results) {
+    reportHuman(result);
+  }
+}
+
+export function reportMultiJSON(multi: PSGuardMultiResult): void {
+  console.log(JSON.stringify(multi, null, 2));
 }

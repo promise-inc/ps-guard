@@ -4,19 +4,25 @@ import { validateResults as _validateResults } from "./validator";
 import type { PSGuardConfig, PSGuardResult } from "./types";
 
 export { loadConfig, resolvePreset } from "./config";
-export { runLighthouse } from "./runner";
+export { runLighthouse, launchChrome, runSingleAudit, killChrome } from "./runner";
 export { parseMetrics } from "./parser";
 export { validateResults } from "./validator";
-export { reportHuman, reportJSON } from "./reporter";
+export { reportHuman, reportJSON, reportMultiHuman, reportMultiJSON } from "./reporter";
 export { getHints } from "./hints";
 export { presets, presetNames } from "./presets";
+export { fetchSitemap } from "./sitemap";
+export { runMultiAudit } from "./orchestrator";
+export { generateHtmlReport, writeHtmlReport } from "./report-html";
 
 export type {
   PSGuardConfig,
   PSGuardThresholds,
   MetricResult,
   PSGuardResult,
+  PSGuardMultiResult,
+  SitemapEntry,
   Preset,
+  CLIArgs,
 } from "./types";
 
 export async function runPSGuard(

@@ -3,9 +3,13 @@
 import { loadConfig } from "./config";
 import { runLighthouse } from "./runner";
 import { validateResults } from "./validator";
-import { reportHuman, reportJSON } from "./reporter";
+import { reportHuman, reportJSON, reportMultiHuman, reportMultiJSON } from "./reporter";
 import { presetNames } from "./presets/registry";
 import { setCIMode, printError } from "./utils/output";
+import { setProgressCIMode } from "./utils/progress";
+import { fetchSitemap } from "./sitemap";
+import { runMultiAudit } from "./orchestrator";
+import { writeHtmlReport } from "./report-html";
 import type { CLIArgs } from "./types";
 
 function parseArgs(args: string[]): CLIArgs {
@@ -15,7 +19,11 @@ function parseArgs(args: string[]): CLIArgs {
   let json = false;
   let ci = false;
   let help = false;
+  let html = false;
   let retries: number | undefined;
+  let sitemap: string | undefined;
+  let report: string | undefined;
+  let maxUrls: number | undefined;
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
@@ -38,16 +46,30 @@ function parseArgs(args: string[]): CLIArgs {
       ci = true;
     } else if (arg === "--help" || arg === "-h") {
       help = true;
+    } else if (arg === "--html") {
+      html = true;
     } else if (arg === "--retries") {
       const val = parseInt(args[i + 1], 10);
       if (!isNaN(val) && val > 0) {
         retries = val;
       }
       i++;
+    } else if (arg === "--sitemap") {
+      sitemap = args[i + 1];
+      i++;
+    } else if (arg === "--report") {
+      report = args[i + 1];
+      i++;
+    } else if (arg === "--max-urls") {
+      const val = parseInt(args[i + 1], 10);
+      if (!isNaN(val) && val > 0) {
+        maxUrls = val;
+      }
+      i++;
     }
   }
 
-  return { url, preset, device, json, ci, help, retries };
+  return { url, preset, device, json, ci, help, html, retries, sitemap, report, maxUrls };
 }
 
 function printHelp(): void {
@@ -57,16 +79,21 @@ function printHelp(): void {
   \x1b[1mUsage:\x1b[0m
     npx ps-guard --url https://example.com
     npx ps-guard --url https://example.com --preset nextjs
-    npx ps-guard --url https://example.com --json
+    npx ps-guard --sitemap https://example.com/sitemap.xml
+    npx ps-guard --url https://example.com --html
 
   \x1b[1mOptions:\x1b[0m
-    --url <url>             URL to audit (required)
-    -p, --preset <name>     Use a built-in preset
+    --url <url>                URL to audit
+    --sitemap <url>            Sitemap URL to audit all pages
+    --max-urls <n>             Max URLs from sitemap (default: 50)
+    --html                     Generate HTML report
+    --report <dir>             Output directory for HTML report (default: ./ps-guard-report)
+    -p, --preset <name>        Use a built-in preset
     --device <mobile|desktop>  Device emulation (default: mobile)
-    --retries <n>           Number of retry attempts (default: 1)
-    --json                  Output results as JSON
-    --ci                    CI mode (no colors, clean output)
-    -h, --help              Show this help message
+    --retries <n>              Number of retry attempts (default: 1)
+    --json                     Output results as JSON
+    --ci                       CI mode (no colors, clean output)
+    -h, --help                 Show this help message
 
   \x1b[1mPresets:\x1b[0m
     ${presetNames.join(", ")}
@@ -93,6 +120,7 @@ async function main(): Promise<void> {
 
   if (parsed.ci) {
     setCIMode(true);
+    setProgressCIMode(true);
   }
 
   try {
@@ -102,19 +130,54 @@ async function main(): Promise<void> {
       preset: parsed.preset,
       device: parsed.device,
       retries: parsed.retries,
+      sitemap: parsed.sitemap,
+      report: parsed.report,
+      html: parsed.html || undefined,
+      maxUrls: parsed.maxUrls,
     });
 
-    const lighthouseResult = await runLighthouse(config);
-    const result = validateResults(lighthouseResult.lhr, config);
+    const isSitemapMode = Boolean(config.sitemap);
+    const outputDir = config.report ?? "./ps-guard-report";
+    const shouldHtml = config.html ?? parsed.html;
 
-    if (parsed.json) {
-      reportJSON(result);
+    if (isSitemapMode) {
+      const entries = await fetchSitemap(config.sitemap as string);
+      const urls = entries.map((e) => e.url);
+
+      const multiResult = await runMultiAudit({ urls, config });
+
+      if (shouldHtml) {
+        const filePath = writeHtmlReport(multiResult, outputDir);
+        console.log(`\n  HTML report: ${filePath}\n`);
+      }
+
+      if (parsed.json) {
+        reportMultiJSON(multiResult);
+      } else if (!shouldHtml) {
+        reportMultiHuman(multiResult);
+      }
+
+      if (!multiResult.passed) {
+        process.exit(1);
+      }
     } else {
-      reportHuman(result);
-    }
+      const lighthouseResult = await runLighthouse(config);
+      const result = validateResults(lighthouseResult.lhr, config);
 
-    if (!result.passed) {
-      process.exit(1);
+      if (shouldHtml) {
+        const filePath = writeHtmlReport(result, outputDir);
+        console.log(`\n  HTML report: ${filePath}\n`);
+      }
+
+      if (parsed.json) {
+        reportJSON(result);
+      } else if (!shouldHtml) {
+        reportHuman(result);
+      }
+
+      if (!result.passed) {
+        process.exit(1);
+      }
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

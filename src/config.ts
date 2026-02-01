@@ -76,8 +76,11 @@ export function loadConfig(
     presetConfig = resolvePreset(presetName);
   }
 
+  const sitemap = overrides.sitemap ?? fileConfig.sitemap;
+  const url = overrides.url ?? fileConfig.url ?? "";
+
   const merged: PSGuardConfig = {
-    url: overrides.url ?? fileConfig.url ?? "",
+    url,
     device: overrides.device ?? fileConfig.device ?? presetConfig.device ?? DEFAULT_CONFIG.device,
     minScore: overrides.minScore ?? fileConfig.minScore ?? DEFAULT_CONFIG.minScore,
     thresholds: {
@@ -89,10 +92,14 @@ export function loadConfig(
     failOnError: overrides.failOnError ?? fileConfig.failOnError ?? DEFAULT_CONFIG.failOnError,
     retries: overrides.retries ?? fileConfig.retries ?? DEFAULT_CONFIG.retries,
     preset: presetName,
+    sitemap,
+    report: overrides.report ?? fileConfig.report,
+    html: overrides.html ?? fileConfig.html,
+    maxUrls: overrides.maxUrls ?? fileConfig.maxUrls,
   };
 
-  if (!merged.url) {
-    throw new Error("URL is required. Use --url <url> or set it in config file.");
+  if (!merged.url && !merged.sitemap) {
+    throw new Error("URL or sitemap is required. Use --url <url> or --sitemap <url>.");
   }
 
   return merged;
