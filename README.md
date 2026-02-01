@@ -161,6 +161,7 @@ jobs:
 - [@promise-inc/dev-reel](https://github.com/promise-inc/dev-reel) — Animated SVG previews for READMEs
 - [@promise-inc/devlog](https://github.com/promise-inc/devlog) — Simple logger with automatic context (file + line)
 - [@promise-inc/fs-guard](https://github.com/promise-inc/fs-guard) — Validate project folder and file structure
+- [@promise-inc/ui-states](https://github.com/promise-inc/ui-states) — Auto-generated skeleton loading states from real DOM
 
 ## License
 
