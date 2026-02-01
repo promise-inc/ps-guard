@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420">
+  <defs>
+    <style>
+      @keyframes scanline {
+        0% { transform: translateY(0); opacity: 0; }
+        10% { opacity: 0.6; }
+        90% { opacity: 0.6; }
+        100% { transform: translateY(280px); opacity: 0; }
+      }
+      .scan { animation: scanline 3s ease-in-out infinite; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="720" height="420" rx="8" fill="#1e1e2e"/>
+
+  <!-- Window dots -->
+  <circle cx="20" cy="18" r="6" fill="#ff5f57"/>
+  <circle cx="40" cy="18" r="6" fill="#febc2e"/>
+  <circle cx="60" cy="18" r="6" fill="#28c840"/>
+
+  <!-- Title -->
+  <text font-family="monospace" font-size="12" fill="#585b70" x="540" y="19">@promise-inc/ps-guard</text>
+
+  <!-- Terminal prompt -->
+  <text font-family="monospace" font-size="13" y="52">
+    <tspan x="20" fill="#a6e3a1">$</tspan>
+    <tspan fill="#cdd6f4"> npx ps-guard --url https://example.com --preset nextjs</tspan>
+  </text>
+
+  <!-- Header -->
+  <text font-family="monospace" font-size="13" font-weight="bold" fill="#cdd6f4" x="20" y="88">ps-guard</text>
+  <text font-family="monospace" font-size="13" fill="#585b70" x="100" y="88">v0.2.1 · mobile · nextjs preset</text>
+
+  <!-- URL -->
+  <text font-family="monospace" font-size="13" fill="#585b70" x="30" y="116">auditing https://example.com</text>
+
+  <!-- LCP -->
+  <text font-family="monospace" font-size="12" y="148">
+    <tspan x="30" fill="#a6e3a1">✔</tspan>
+    <tspan fill="#a6e3a1"> LCP</tspan>
+    <tspan fill="#585b70">    1,820ms</tspan>
+    <tspan fill="#585b70"> (max 2,500ms)</tspan>
+  </text>
+
+  <!-- CLS -->
+  <text font-family="monospace" font-size="12" y="170">
+    <tspan x="30" fill="#a6e3a1">✔</tspan>
+    <tspan fill="#a6e3a1"> CLS</tspan>
+    <tspan fill="#585b70">    0.04</tspan>
+    <tspan fill="#585b70">    (max 0.1)</tspan>
+  </text>
+
+  <!-- INP -->
+  <text font-family="monospace" font-size="12" y="192">
+    <tspan x="30" fill="#a6e3a1">✔</tspan>
+    <tspan fill="#a6e3a1"> INP</tspan>
+    <tspan fill="#585b70">    120ms</tspan>
+    <tspan fill="#585b70">   (max 200ms)</tspan>
+  </text>
+
+  <!-- TTFB - failing -->
+  <text font-family="monospace" font-size="12" y="214">
+    <tspan x="30" fill="#f38ba8">✖</tspan>
+    <tspan fill="#f38ba8"> TTFB</tspan>
+    <tspan fill="#585b70">   1,240ms</tspan>
+    <tspan fill="#585b70"> (max 800ms)</tspan>
+  </text>
+
+  <!-- FCP -->
+  <text font-family="monospace" font-size="12" y="236">
+    <tspan x="30" fill="#a6e3a1">✔</tspan>
+    <tspan fill="#a6e3a1"> FCP</tspan>
+    <tspan fill="#585b70">    1,450ms</tspan>
+    <tspan fill="#585b70"> (max 1,800ms)</tspan>
+  </text>
+
+  <!-- Score -->
+  <text font-family="monospace" font-size="13" y="268">
+    <tspan x="30" fill="#cdd6f4">Score:</tspan>
+    <tspan fill="#fab387"> 78</tspan>
+    <tspan fill="#585b70"> / 100</tspan>
+  </text>
+
+  <!-- Score bar background -->
+  <rect x="30" y="280" width="660" height="8" rx="4" fill="#313244"/>
+  <!-- Score bar fill -->
+  <rect x="30" y="280" width="515" height="8" rx="4" fill="#fab387"/>
+
+  <!-- Hint -->
+  <text font-family="monospace" font-size="12" y="314">
+    <tspan x="30" fill="#fab387">hint:</tspan>
+    <tspan fill="#585b70"> TTFB too high — check server response time, CDN config,</tspan>
+  </text>
+  <text font-family="monospace" font-size="12" y="332">
+    <tspan x="30" fill="#585b70">       or redirect chains.</tspan>
+  </text>
+
+  <!-- Divider -->
+  <text font-family="monospace" font-size="12" fill="#585b70" x="20" y="358">---</text>
+
+  <!-- Summary -->
+  <text font-family="monospace" font-size="13" y="382">
+    <tspan x="30" fill="#a6e3a1">4 passed</tspan>
+    <tspan fill="#585b70">  </tspan>
+    <tspan fill="#f38ba8">1 failed</tspan>
+    <tspan fill="#585b70">  score 78/100</tspan>
+  </text>
+
+  <!-- Exit code -->
+  <text font-family="monospace" font-size="12" fill="#585b70" x="30" y="404">exit code: 1</text>
+
+  <!-- Scan line effect -->
+  <rect x="20" y="60" width="680" height="2" rx="1" fill="#f38ba8" opacity="0.3" class="scan"/>
+</svg>

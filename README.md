@@ -2,6 +2,10 @@
 
 Lighthouse-based performance guard. Enforce Web Vitals thresholds in CI and locally.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/promise-inc/ps-guard/main/assets/demo.svg" alt="ps-guard CLI output demo" width="680" />
+</p>
+
 ## Why ps-guard?
 
 Running Lighthouse manually is tedious and inconsistent. `ps-guard` wraps Lighthouse into an opinionated CLI and API with:
@@ -37,14 +41,8 @@ npx ps-guard --url https://example.com --ci
 # Audit all pages from sitemap
 npx ps-guard --sitemap https://example.com/sitemap.xml
 
-# Sitemap with max URLs
-npx ps-guard --sitemap https://example.com/sitemap.xml --max-urls 20
-
 # Generate HTML report
 npx ps-guard --url https://example.com --html
-
-# Sitemap + HTML report in custom directory
-npx ps-guard --sitemap https://example.com/sitemap.xml --html --report ./reports/
 ```
 
 ### Programmatic
@@ -77,7 +75,6 @@ if (!result.passed) {
 | `--retries <n>` | Retry attempts | `1` |
 | `--json` | Output as JSON | `false` |
 | `--ci` | No colors, clean output | `false` |
-| `-h, --help` | Show help | — |
 
 > **Note:** Either `--url` or `--sitemap` is required.
 
@@ -95,18 +92,6 @@ Features:
 - `--max-urls` limits the number of URLs (default: 50)
 - Progress output shows score per URL in real time
 - If one URL fails, the audit continues with remaining URLs
-
-Example output:
-```
-Scanning 42 URLs from sitemap...
-
-[1/42] ✔ 94  https://example.com/
-[2/42] ✖ 67  https://example.com/about
-[3/42] ✔ 91  https://example.com/pricing
-...
-
-✖ 3 of 42 URLs failed (avg score: 85)
-```
 
 ## HTML Report
 
@@ -126,8 +111,6 @@ The report includes:
 - Collapsible detail sections per URL with metric bars
 - Lighthouse color coding (green/orange/red)
 
-The report is written to `./ps-guard-report/index.html` by default (override with `--report <dir>`).
-
 ## Configuration
 
 Create a `ps-guard.config.json` (or `.js`/`.ts`) in your project root:
@@ -145,17 +128,6 @@ Create a `ps-guard.config.json` (or `.js`/`.ts`) in your project root:
     "fcp": 1800
   },
   "retries": 2
-}
-```
-
-Or add to `package.json`:
-
-```json
-{
-  "ps-guard": {
-    "url": "https://example.com",
-    "preset": "nextjs"
-  }
 }
 ```
 
@@ -222,14 +194,28 @@ jobs:
 - Node.js >= 18
 - Chrome/Chromium installed (for Lighthouse)
 
-## See Also
+## How to report bugs
 
-- [@promise-inc/ai-guard](https://github.com/promise-inc/ai-guard) — Detect AI-generated code patterns before commit/push
-- [@promise-inc/dev-reel](https://github.com/promise-inc/dev-reel) — Animated SVG previews for READMEs
-- [@promise-inc/devlog](https://github.com/promise-inc/devlog) — Simple logger with automatic context (file + line)
-- [@promise-inc/fs-guard](https://github.com/promise-inc/fs-guard) — Validate project folder and file structure
-- [@promise-inc/ui-states](https://github.com/promise-inc/ui-states) — Auto-generated skeleton loading states from real DOM
+To report a bug, please first read our guide on [opening issues](https://github.com/promise-inc/ps-guard/issues).
+
+## How to contribute code
+
+To open a pull request, please first read our guide on [opening pull requests](https://github.com/promise-inc/ps-guard/pulls), which outlines our process for RFCs and pull requests.
+
+## Also by Promise Inc.
+
+| Package | Description |
+|---------|-------------|
+| [`@promise-inc/ai-guard`](https://github.com/promise-inc/ai-guard) | Detect AI-generated code patterns |
+| [`@promise-inc/fs-guard`](https://github.com/promise-inc/fs-guard) | Validate project folder and file structure |
+| [`@promise-inc/devlog`](https://github.com/promise-inc/devlog) | Logger with automatic context (file + line) |
+| [`@promise-inc/ui-states`](https://github.com/promise-inc/ui-states) | Auto-generated skeleton loading states |
+| [`@promise-inc/dev-reel`](https://github.com/promise-inc/dev-reel) | Animated SVG previews for READMEs |
+
+---
+
+Developed by [Promise Inc.](https://promise.codes)
 
 ## License
 
-MIT
+MIT © [Promise Inc.](https://promise.codes)
